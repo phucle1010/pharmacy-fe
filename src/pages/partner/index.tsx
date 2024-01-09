@@ -52,8 +52,8 @@ const FormLayouts = () => {
             <CardHeader title='Business Partner' titleTypographyProps={{ variant: 'h6' }} />
             <TextField 
               type='text' 
-              label='Partner name' 
-              placeholder='Partner name' 
+              label='Search Partner' 
+              placeholder='Name' 
               style={{ width: 300, marginLeft: 20, marginRight: 8 }}
             />
 
@@ -90,15 +90,7 @@ const FormLayouts = () => {
             </TableContainer>
           </Card>
         </Grid>
-        {/* <Grid item xs={12} md={6}>
-          <FormLayoutsIcons />
-        </Grid>
-        <Grid item xs={12}>
-          <FormLayoutsSeparator />
-        </Grid>
-        <Grid item xs={12}>
-          <FormLayoutsAlignment />
-        </Grid> */}
+        
       </Grid>
     </DatePickerWrapper>
   )

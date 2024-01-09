@@ -77,7 +77,7 @@ export class ServerService {
     // PRODUCT
     public getProductList(): Promise<any> {
         return axios.get(
-            `${this.BE_URL}/partner`, 
+            `${this.BE_URL}/product`, 
             { headers: { ...this.HEADERS }}
         )
     }
