@@ -1,5 +1,5 @@
 // ** React Imports
-import { SyntheticEvent, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -22,6 +22,10 @@ import TabSecurity from 'src/views/account-settings/TabSecurity'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import { CardHeader, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { ServerService } from 'src/@core/services/serverService.service'
+import { getGender, getTypeOfUser } from 'src/@core/helpers'
 
 const Tab = styled(MuiTab)<TabProps>(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
@@ -41,63 +45,80 @@ const TabName = styled('span')(({ theme }) => ({
   }
 }))
 
-const AccountSettings = () => {
+const serverService = new ServerService();
+
+const User = () => {
   // ** State
-  const [value, setValue] = useState<string>('account')
+  const [value, setValue] = useState<string>('account');
+  const [users, setUsers] = useState([]);
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)
   }
 
-  return (
-    <Card>
-      <TabContext value={value}>
-        <TabList
-          onChange={handleChange}
-          aria-label='account-settings tabs'
-          sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
-        >
-          <Tab
-            value='account'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <AccountOutline />
-                <TabName>Account</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='security'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <LockOpenOutline />
-                <TabName>Security</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='info'
-            label={
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <InformationOutline />
-                <TabName>Info</TabName>
-              </Box>
-            }
-          />
-        </TabList>
+  const getUserList = () => {
+    serverService
+      .getUserList()
+      .then((res) => setUsers(res.data))
+  }
 
-        <TabPanel sx={{ p: 0 }} value='account'>
-          <TabAccount />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <TabSecurity />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='info'>
-          <TabInfo />
-        </TabPanel>
-      </TabContext>
-    </Card>
+  useEffect(() => {
+    getUserList();
+  }, [])
+
+  return (
+    <DatePickerWrapper>
+      <Grid container spacing={6}>
+        <Grid item xs={12} md={12}>
+          {/* <FormLayoutsBasic /> */}
+          <Card style={{ paddingBottom: 20 }}>
+            <CardHeader title='Business Partner' titleTypographyProps={{ variant: 'h6' }} />
+            <TextField 
+              type='text' 
+              label='Search User' 
+              placeholder='Name' 
+              style={{ width: 300, marginLeft: 20, marginRight: 8 }}
+            />
+
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label='simple table'>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align='left'>Full Name</TableCell>
+                      <TableCell align='left'>Email</TableCell>
+                      <TableCell align='left'>Vai trò</TableCell>
+                      <TableCell align='left'>Giới tính</TableCell>
+                      <TableCell align='left'>Số điện thoại</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {
+                      users.map((item: any, idx: number) => (
+                        <TableRow
+                          key={idx}
+                          sx={{
+                            '&:last-of-type td, &:last-of-type th': {
+                              border: 0
+                            }
+                          }}
+                        >
+                          <TableCell align='left'>{item.fullName}</TableCell>
+                          <TableCell align='left'>{item.email}</TableCell>
+                          <TableCell align='left'>{getTypeOfUser(item.typeUser)}</TableCell>
+                          <TableCell align='left'>{getGender(item.gender)}</TableCell>
+                          <TableCell align='left'>{item.phone}</TableCell>
+                        </TableRow>
+                      ))
+                    }
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Card>
+        </Grid>
+        
+      </Grid>
+    </DatePickerWrapper>
   )
 }
 
-export default AccountSettings
+export default User
