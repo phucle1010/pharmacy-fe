@@ -3,15 +3,15 @@ import { environment } from 'src/environment/environment'
 import { AuthService } from "./auth.service";
 
 export class ServerService {
+    authService = new AuthService();
     BE_URL = environment.host;
     HEADERS = {
         ...environment.headers,
-        'Authorization': this.authService.getToken()
+        'Authorization': this.authService.getToken()?.access_token
     };
 
-    constructor(
-        private authService: AuthService
-    ) {}
+
+    constructor() {}
 
     // USERS
     public getProfile(): Promise<any> {
