@@ -102,9 +102,9 @@ const TabAccount = () => {
                     <TextField fullWidth label='Search' placeholder='Search info here' defaultValue=''  />                   
                   </Grid>
 
-                  <Button marginLeft={3} marginTop={3}>
+                  <Grid marginLeft={3} marginTop={3}>
                     <Magnify/>
-                  </Button>
+                  </Grid>
 
                 </Grid>
                 
