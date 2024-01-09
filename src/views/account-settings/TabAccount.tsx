@@ -29,23 +29,6 @@ const ImgStyled = styled('img')(({ theme }) => ({
   borderRadius: theme.shape.borderRadius
 }))
 
-const ButtonStyled = styled(Button)<ButtonProps & { component?: ElementType; htmlFor?: string }>(({ theme }) => ({
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    textAlign: 'center'
-  }
-}))
-
-const ResetButtonStyled = styled(Button)<ButtonProps>(({ theme }) => ({
-  marginLeft: theme.spacing(4.5),
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    marginLeft: 0,
-    textAlign: 'center',
-    marginTop: theme.spacing(4)
-  }
-}))
-
 const ButtonUpdateStyled = styled(Button)<ButtonProps>(({ theme }) => ({
   marginLeft: theme.spacing(4.5),
   [theme.breakpoints.down('sm')]: {
@@ -55,44 +38,19 @@ const ButtonUpdateStyled = styled(Button)<ButtonProps>(({ theme }) => ({
 }))
 
 
-
 const TabAccount = () => {
   // ** State
   const [openAlert, setOpenAlert] = useState<boolean>(true)
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
 
-  const onChange = (file: ChangeEvent) => {
-    const reader = new FileReader()
-    const { files } = file.target as HTMLInputElement
-    if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result as string)
-
-      reader.readAsDataURL(files[0])
-    }
-  }
 
   return (
     <CardContent>
-      <form>
-        <Grid container spacing={7}>
+      <Grid container spacing={7}>
           <Grid item xs={12} sx={{ marginTop: 4.8, marginBottom: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <ImgStyled src={imgSrc} alt='Profile Pic' />
-              <Box>      
-                <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
-                  Upload New Photo
-                  <input
-                    hidden
-                    type='file'
-                    onChange={onChange}
-                    accept='image/png, image/jpeg'
-                    id='account-settings-upload-image'
-                  />
-                </ButtonStyled>
-                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
-                  Reset
-                </ResetButtonStyled>
-
+              <Box>                   
                 <ButtonUpdateStyled component='label' variant='contained'>
                   Update info
                 </ButtonUpdateStyled>
@@ -104,58 +62,13 @@ const TabAccount = () => {
 
                   <Grid marginLeft={3} marginTop={3}>
                     <Magnify/>
-                  </Grid>
-
+                  </Grid>                 
                 </Grid>
-                
-                <Typography variant='body2' sx={{ marginTop: 5 }}>
-                  Allowed PNG or JPEG. Max size of 800K.
-                </Typography>
               </Box>
             </Box>
           </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Username' placeholder='Enter user name' defaultValue='' />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Name' placeholder='Enter name' defaultValue='' />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              type='email'
-              label='Email'
-              placeholder=' email_name@example.com'
-              defaultValue=''
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Role</InputLabel>
-              <Select label='Role' defaultValue=''>
-                <MenuItem value='admin'>Admin</MenuItem>
-                <MenuItem value='author'>Author</MenuItem>
-                <MenuItem value='editor'>Editor</MenuItem>
-                <MenuItem value='maintainer'>Maintainer</MenuItem>
-                <MenuItem value='subscriber'>Subscriber</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
-              <Select label='Status' defaultValue=''>
-                <MenuItem value='active'>Active</MenuItem>
-                <MenuItem value='inactive'>Inactive</MenuItem>
-                <MenuItem value='pending'>Pending</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label='Phone number' placeholder='Enter phone number' defaultValue='' />
-          </Grid>
-
+        <form>
           {openAlert ? (
             <Grid item xs={12} sx={{ mb: 3 }}>
               <Alert
@@ -165,8 +78,8 @@ const TabAccount = () => {
                   <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
                     <Close fontSize='inherit' />
                   </IconButton>
-                }
-              >
+                }>
+              
                 <AlertTitle>Your email is not confirmed. Please check your inbox.</AlertTitle>
                 <Link href='/' onClick={(e: SyntheticEvent) => e.preventDefault()}>
                   Resend Confirmation
@@ -183,8 +96,8 @@ const TabAccount = () => {
               Reset
             </Button>
           </Grid>
-        </Grid>
-      </form>
+        </form>
+      </Grid>
     </CardContent>
   )
 }

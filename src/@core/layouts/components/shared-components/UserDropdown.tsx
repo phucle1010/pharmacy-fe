@@ -23,6 +23,10 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
+import { AuthService } from 'src/@core/services/auth.service'
+
+const authService = new AuthService();
+
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -62,6 +66,11 @@ const UserDropdown = () => {
       fontSize: '1.375rem',
       color: 'text.secondary'
     }
+  }
+
+  const handleLogout = () => {
+    authService.removeToken();
+    window.location.reload();
   }
 
   return (
@@ -144,7 +153,7 @@ const UserDropdown = () => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
+        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
           <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
           Logout
         </MenuItem>

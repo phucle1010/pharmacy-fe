@@ -22,11 +22,6 @@ import MuiCard, { CardProps } from '@mui/material/Card'
 import InputAdornment from '@mui/material/InputAdornment'
 import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
 
-// ** Icons Imports
-import Google from 'mdi-material-ui/Google'
-import Github from 'mdi-material-ui/Github'
-import Twitter from 'mdi-material-ui/Twitter'
-import Facebook from 'mdi-material-ui/Facebook'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 
@@ -39,7 +34,11 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
 
+import { AuthService } from 'src/@core/services/auth.service'
+import { Alert, Snackbar } from '@mui/material'
+
 interface State {
+  email: string
   password: string
   showPassword: boolean
 }
@@ -62,12 +61,18 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
   }
 }))
 
+const authService = new AuthService();
+
 const LoginPage = () => {
   // ** State
   const [values, setValues] = useState<State>({
+    email: '',
     password: '',
     showPassword: false
   })
+  
+  const [errorOpen, setErrorOpen] = useState(false);
+  const [message, setMessage] = useState('');
 
   // ** Hook
   const theme = useTheme()
@@ -83,6 +88,33 @@ const LoginPage = () => {
 
   const handleMouseDownPassword = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+  } 
+
+  const handleSubmit = () => {
+    authService
+      .authenticate({ 
+        email: values.email, 
+        password: values.password
+      })
+      .then((res) => {
+        try {
+          if (res.status === 200) {
+            const access_token = res.data.access_token;
+            authService.saveToken(access_token);
+            window.location.replace('/');
+          }
+        } catch {
+          
+        }
+      })
+      .catch((err) => {
+        setErrorOpen(true);
+        setMessage(err.response.data.detail);
+        setTimeout(() => {
+          setErrorOpen(false);
+          setMessage('');
+        }, 800)
+      })
   }
 
   return (
@@ -166,10 +198,18 @@ const LoginPage = () => {
             <Typography variant='h5' sx={{ fontWeight: 600, marginBottom: 1.5 }}>
               Welcome to {themeConfig.templateName}! 👋🏻
             </Typography>
-            <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
+            <Typography variant='body2'>Please sign-in to your account before accessing to the system</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
+          <form noValidate autoComplete='off'>
+            <TextField 
+              autoFocus 
+              fullWidth 
+              id='email' 
+              label='Email' 
+              sx={{ marginBottom: 4 }}
+              value={values.email} 
+              onChange={handleChange('email')}
+            />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
               <OutlinedInput
@@ -205,49 +245,20 @@ const LoginPage = () => {
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              onClick={handleSubmit}
             >
               Login
             </Button>
-            <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Typography variant='body2' sx={{ marginRight: 2 }}>
-                New on our platform?
-              </Typography>
-              <Typography variant='body2'>
-                <Link passHref href='/pages/register'>
-                  <LinkStyled>Create an account</LinkStyled>
-                </Link>
-              </Typography>
-            </Box>
-            <Divider sx={{ my: 5 }}>or</Divider>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Facebook sx={{ color: '#497ce2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Twitter sx={{ color: '#1da1f2' }} />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Github
-                    sx={{ color: theme => (theme.palette.mode === 'light' ? '#272727' : theme.palette.grey[300]) }}
-                  />
-                </IconButton>
-              </Link>
-              <Link href='/' passHref>
-                <IconButton component='a' onClick={(e: MouseEvent<HTMLElement>) => e.preventDefault()}>
-                  <Google sx={{ color: '#db4437' }} />
-                </IconButton>
-              </Link>
-            </Box>
+            
           </form>
         </CardContent>
       </Card>
       <FooterIllustrationsV1 />
+      <Snackbar open={errorOpen} autoHideDuration={800} >
+        <Alert severity="error" sx={{ width: '100%' }} >
+          { message }
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

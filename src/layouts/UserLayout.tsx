@@ -1,5 +1,6 @@
+'use client'
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -14,19 +15,40 @@ import VerticalLayout from 'src/@core/layouts/VerticalLayout'
 import VerticalNavItems from 'src/navigation/vertical'
 
 // ** Component Import
-import UpgradeToProButton from './components/UpgradeToProButton'
 import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { useRouter } from 'next/router'
+import React from 'react'
+
+import { AuthService } from 'src/@core/services/auth.service';
 
 interface Props {
   children: ReactNode
 }
 
+const authService = new AuthService();
+
 const UserLayout = ({ children }: Props) => {
   // ** Hooks
-  const { settings, saveSettings } = useSettings()
+  const { settings, saveSettings } = useSettings();
+
+
+  const [pending, setPending] = useState(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+      if (typeof window !== 'undefined') {
+        if (!window.localStorage.getItem(authService.getTokenKey())) {
+          router.push('/pages/login');
+        } else {
+          setPending(false);
+          router.push('/');
+        }
+      }
+  }, [])
 
   /**
    *  The below variable will hide the current layout menu at given screen size.
@@ -38,40 +60,32 @@ const UserLayout = ({ children }: Props) => {
    */
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
 
-  const UpgradeToProImg = () => {
-    return (
-      <Box sx={{ mx: 'auto' }}>
-        <a
-          target='_blank'
-          rel='noreferrer'
-          href='https://themeselection.com/products/materio-mui-react-nextjs-admin-template/'
-        >
-          <img width={230} alt='upgrade to premium' src={`/images/misc/upgrade-banner-${settings.mode}.png`} />
-        </a>
-      </Box>
-    )
-  }
 
   return (
-    <VerticalLayout
-      hidden={hidden}
-      settings={settings}
-      saveSettings={saveSettings}
-      verticalNavItems={VerticalNavItems()} // Navigation Items
-      verticalAppBarContent={(
-        props // AppBar Content
-      ) => (
-        <VerticalAppBarContent
-          hidden={hidden}
-          settings={settings}
-          saveSettings={saveSettings}
-          toggleNavVisibility={props.toggleNavVisibility}
-        />
-      )}
-    >
-      {children}
-      <UpgradeToProButton />
-    </VerticalLayout>
+    <React.Fragment>
+      {
+        !pending && (
+          <VerticalLayout
+            hidden={hidden}
+            settings={settings}
+            saveSettings={saveSettings}
+            verticalNavItems={VerticalNavItems()} // Navigation Items
+            verticalAppBarContent={(
+              props // AppBar Content
+            ) => (
+              <VerticalAppBarContent
+                hidden={hidden}
+                settings={settings}
+                saveSettings={saveSettings}
+                toggleNavVisibility={props.toggleNavVisibility}
+              />
+            )}
+          >
+            {children}
+          </VerticalLayout>
+        )
+      }
+    </React.Fragment>
   )
 }
 

@@ -19,6 +19,11 @@ const navigation = (): VerticalNavItemsType => {
       path: '/user'
     },
     {
+      title: 'Order',
+      icon: SwapVertical,
+      path: '/order'
+    },
+    {
       title: 'Product',
       icon: FormatListCheckbox,
       path: '/product'
