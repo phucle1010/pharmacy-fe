@@ -72,7 +72,7 @@ const User = () => {
         <Grid item xs={12} md={12}>
           {/* <FormLayoutsBasic /> */}
           <Card style={{ paddingBottom: 20 }}>
-            <CardHeader title='Business Partner' titleTypographyProps={{ variant: 'h6' }} />
+            <CardHeader title='User' titleTypographyProps={{ variant: 'h6' }} />
             <TextField 
               type='text' 
               label='Search User' 
