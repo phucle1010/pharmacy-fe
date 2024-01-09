@@ -1,14 +1,12 @@
 'use client'
 
 import axios from "axios";
+import { environment } from 'src/environment/environment'
 
 export class AuthService {
     ACCESS_TOKEN = 'auth_access_token';
-    BE_URL = 'http://localhost:8080';
-    HEADERS = {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-    }
+    BE_URL = environment.host;
+    HEADERS = environment.headers;
 
     constructor() {}
 
