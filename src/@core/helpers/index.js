@@ -24,6 +24,29 @@ export const TYPE_OF_USER = {
     },
 }
 
+export const PRODUCT_UNIT = {
+    BOX: { 
+        value: 'BOX',
+        name: 'Hộp'
+    },
+    EACH: { 
+        value: 'EACH',
+        name: 'Cái'
+    },
+    PACKAGE: { 
+        value: 'PACKAGE',
+        name: 'Gói'
+    },
+    KILOGRAM: { 
+        value: 'KILOGRAM',
+        name: 'kg'
+    },
+    GRAM: { 
+        value: 'GRAM',
+        name: 'g'
+    },
+}
+
 export const getGender = (value) => {
     const findedKey = Object.keys(GENDER).filter((key) => GENDER[key].value === value)[0];
     return GENDER[findedKey].name;
@@ -32,4 +55,9 @@ export const getGender = (value) => {
 export const getTypeOfUser = (value) => {
     const findedKey = Object.keys(TYPE_OF_USER).filter((key) => TYPE_OF_USER[key].value === value)[0];
     return TYPE_OF_USER[findedKey].name;
+}
+
+export const getProductUnit = (value) => {
+    const findedKey = Object.keys(PRODUCT_UNIT).filter((key) => PRODUCT_UNIT[key].value === value)[0];
+    return PRODUCT_UNIT[findedKey].name;
 }
