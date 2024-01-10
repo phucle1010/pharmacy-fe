@@ -58,15 +58,6 @@ const TabSell = () => {
           <Card style={{ paddingBottom: 20 }}>
             <CardHeader title='Order Sell' titleTypographyProps={{ variant: 'h6' }} />
 
-            <Button 
-              size='small' 
-              variant='contained' 
-              color='info' 
-              startIcon={<Plus/>}
-              style={{ marginLeft: 20, marginBottom: 30 }}
-              onClick={() => setShowAddOrder(true)}
-            >Add new</Button>
-
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 650 }} aria-label='simple table'>
                   <TableHead>
@@ -102,6 +93,21 @@ const TabSell = () => {
             </TableContainer>
           </Card>
         </Grid>
+
+        <Button 
+          size='small'
+          variant="contained" 
+          color="info" 
+          onClick={() => setShowAddOrder(true)}
+          startIcon={<Plus />}
+          style={{
+            position: 'fixed',
+            bottom: '50px',
+            right: '20px'
+          }}
+        >
+          Add Order
+        </Button>
         
         <Modal
           open={showAddOrder}

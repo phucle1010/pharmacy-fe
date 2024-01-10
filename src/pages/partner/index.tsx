@@ -9,10 +9,11 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
-import { Button, Card, CardHeader, Paper, Table, TableBody, TableRow, TableCell, TableContainer, TableHead, TextField } from '@mui/material'
+import { Button, Card, CardHeader, Paper, Table, TableBody, TableRow, TableCell, TableContainer, TableHead, TextField, Modal, Box, Typography } from '@mui/material'
 import { ServerService } from 'src/@core/services/serverService.service'
 import { AuthService } from 'src/@core/services/auth.service'
 import { Partner } from 'src/@core/models/partner.model'
+import { Plus } from 'mdi-material-ui'
 
 const createData = (name: string, calories: number, fat: number, carbs: number, protein: number) => {
   return { name, calories, fat, carbs, protein }
@@ -44,7 +45,7 @@ const FormLayouts = () => {
   }, [])
 
   const [add, setAdd] = useState(false);
-  const [newPartner, setNewPartner] = useState<Partner>({
+  const [newPartner, setNewPartner] = useState({
     fullName: '',
     email: '',
     phone: '',
@@ -56,7 +57,7 @@ const FormLayouts = () => {
     setAdd((prevAdd) => !prevAdd);
   }
 
-  const postPartners = (partnerData) => {
+  const postPartners = (partnerData: any) => {
     serverService
       .postBusinessPartners(partnerData)
       .then((res) => {
@@ -142,41 +143,121 @@ const FormLayouts = () => {
         </Grid>
         
       </Grid>
-      <Button variant="contained" color="primary" onClick={handleAdd} style={{
-    position: 'fixed',
-    bottom: '50px',
-    right: '20px'
-  }}>
-          Add Partner
-        </Button>
+      <Button 
+        size='small'
+        variant="contained" 
+        color="info" 
+        onClick={handleAdd} 
+        startIcon={<Plus />}
+        style={{
+          position: 'fixed',
+          bottom: '50px',
+          right: '20px'
+        }}
+      >
+        Add Partner
+      </Button>
 
-        {add && (
-          <div><div>
-            <TextField
-              label='Full Name'
-              value={newPartner.fullName}
-              onChange={(e) => setNewPartner({ ...newPartner, fullName: e.target.value })}
-            />
-            <TextField
-              label='Email'
-              value={newPartner.email}
-              onChange={(e) => setNewPartner({ ...newPartner, email: e.target.value })}
-            />
-            <TextField
-              label='Phone'
-              value={newPartner.phone}
-              onChange={(e) => setNewPartner({ ...newPartner, phone: e.target.value })}
-            />
-            <TextField
-              label='Address'
-              value={newPartner.address}
-              onChange={(e) => setNewPartner({ ...newPartner, address: e.target.value })}
-            /></div>
-            <Button variant="contained" color="primary" onClick={handleSave} style={{ marginLeft: 20 }}>
+      <Modal
+        open={add}
+        onClose={() => setAdd(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box style={{ 
+          height: 'fit-content',
+          width: '400px',
+          padding: '20px',
+          background: '#fff',
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          borderRadius: '20px'
+        }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Partner Detail 
+          </Typography>
+          {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography> */}
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 20 }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              <TextField
+                fullWidth
+                size='small'
+                label='Full Name'
+                value={newPartner.fullName}
+                onChange={(e: any) => setNewPartner({ ...newPartner, fullName: e.target.value })}
+              />
+              <TextField
+                fullWidth
+                size='small'
+                label='Email'
+                value={newPartner.email}
+                onChange={(e: any) => setNewPartner({ ...newPartner, email: e.target.value })}
+              />
+              <TextField
+                fullWidth
+                size='small'
+                label='Phone'
+                value={newPartner.phone}
+                onChange={(e: any) => setNewPartner({ ...newPartner, phone: e.target.value })}
+              />
+              <TextField
+                fullWidth
+                size='small'
+                label='Address'
+                value={newPartner.address}
+                onChange={(e: any) => setNewPartner({ ...newPartner, address: e.target.value })}
+              />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+              <Button 
+                style={{ marginTop: 10 }} 
+                variant="contained" 
+                size='small' 
+                color="primary" onClick={handleSave}
+              >
+                Submit
+              </Button>
+            </div>
+          </div>
+        </Box>
+      </Modal>
+        {/* {add && (
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              <TextField
+                size='small'
+                label='Full Name'
+                value={newPartner.fullName}
+                onChange={(e: any) => setNewPartner({ ...newPartner, fullName: e.target.value })}
+              />
+              <TextField
+                size='small'
+                label='Email'
+                value={newPartner.email}
+                onChange={(e: any) => setNewPartner({ ...newPartner, email: e.target.value })}
+              />
+              <TextField
+                size='small'
+                label='Phone'
+                value={newPartner.phone}
+                onChange={(e: any) => setNewPartner({ ...newPartner, phone: e.target.value })}
+              />
+              <TextField
+                size='small'
+                label='Address'
+                value={newPartner.address}
+                onChange={(e: any) => setNewPartner({ ...newPartner, address: e.target.value })}
+              />
+            </div>
+            <Button variant="contained" size='small' color="primary" onClick={handleSave}>
               Submit
             </Button>
           </div>
-        )}
+        )} */}
 
     </DatePickerWrapper>
 

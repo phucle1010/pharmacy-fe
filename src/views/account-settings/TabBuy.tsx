@@ -1,20 +1,14 @@
 // ** React Imports
-import { useState, ElementType, ChangeEvent, SyntheticEvent, useEffect } from 'react'
+import React, { useState, ElementType, ChangeEvent, SyntheticEvent, useEffect } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Link from '@mui/material/Link'
-import Alert from '@mui/material/Alert'
 import Select from '@mui/material/Select'
 import { styled } from '@mui/material/styles'
 import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import InputLabel from '@mui/material/InputLabel'
-import AlertTitle from '@mui/material/AlertTitle'
-import IconButton from '@mui/material/IconButton'
-import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import Button, { ButtonProps } from '@mui/material/Button'
 
@@ -23,6 +17,7 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import { 
   Card, 
   CardHeader, 
+  FormLabel, 
   Modal, 
   Paper, 
   Table, 
@@ -30,11 +25,12 @@ import {
   TableCell, 
   TableContainer, 
   TableHead, 
-  TableRow 
+  TableRow, 
+  TextField
 } from '@mui/material'
 import { ServerService } from 'src/@core/services/serverService.service'
-import { formattedDate, getOrderStatus } from 'src/@core/helpers'
-import { Plus } from 'mdi-material-ui'
+import { ORDER_STATUS, formattedDate, getOrderStatus } from 'src/@core/helpers'
+import { CheckBold, CheckCircle, Plus } from 'mdi-material-ui'
 
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
@@ -60,12 +56,31 @@ const ResetButtonStyled = styled(Button)<ButtonProps>(({ theme }) => ({
   }
 }))
 
+interface OrderDetail {
+  productId: number;
+  unitPrice: string;
+  quantity: number;
+}
+
+const statuses = [
+  ORDER_STATUS.NOT_PAID,
+  ORDER_STATUS.PAID
+];
+
 const serverService = new ServerService();
 
 const TabBuy = () => {
   // ** State
   const [orders, setOrders] = useState<any>([]);
   const [showAddOrder, setShowAddOrder] = useState<boolean>(false);
+  const [products, setProducts] = useState<any>([]);
+  const [partners, setPartners] = useState<any>([]);
+ 
+  const [createdOrder, setCreatedOrder] = useState<any>({
+    partnerId: null,
+    status: statuses[0].value,
+    orderDetails: []
+  });
 
   const getOrderBuyList = () => {
     serverService
@@ -75,9 +90,48 @@ const TabBuy = () => {
       })
   }
 
-  useEffect(() => {
+  const getProductList = () => {
+    serverService
+      .getProductList()
+      .then((res) => setProducts(res.data));
+  }
+
+  const getPartnerList = () => {
+    serverService
+      .getBusinessPartners({ typePartner: 'BUSINESS' })
+      .then((res) => {
+        setPartners(res.data);
+        if (res.data.length > 0) {
+          setCreatedOrder((prev: any) => ({...prev, partnerId: res.data[0].id}));
+        }
+      });
+  }
+
+  const getData = () => {
     getOrderBuyList();
+    getProductList();
+    getPartnerList();
+  }
+
+  useEffect(() => {
+    getData();
   }, [])
+
+  const handleSave = () => {
+    serverService
+      .importOrderBuy(createdOrder)
+      .then(() => {
+        window.alert('Nhập hàng thành công');
+        setShowAddOrder(false);
+
+        // if (partners.length > 0) {
+        //   setCreatedOrder((prev: any) => (
+        //     {...prev, partnerId: partners[0].id, status: statuses[0].value}
+        //   ));
+        // }
+        getData();
+      })
+  }
 
   return (
     <DatePickerWrapper>
@@ -87,15 +141,6 @@ const TabBuy = () => {
           <Card style={{ paddingBottom: 20 }}>
             <CardHeader title='Order Buy' titleTypographyProps={{ variant: 'h6' }} />
             
-            <Button 
-              size='small' 
-              variant='contained' 
-              color='info' 
-              startIcon={<Plus/>}
-              style={{ marginLeft: 20, marginBottom: 30 }}
-              onClick={() => setShowAddOrder(true)}
-            >Add new</Button>
-
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 650 }} aria-label='simple table'>
                   <TableHead>
@@ -133,9 +178,15 @@ const TabBuy = () => {
         </Grid>
         
         <Modal
-
           open={showAddOrder}
-          onClose={() => setShowAddOrder(false)}
+          onClose={() => {
+            setShowAddOrder(false);
+            setCreatedOrder({
+              partnerId: null,
+              status: '',
+              orderDetails: []
+            });
+          }}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
@@ -148,17 +199,198 @@ const TabBuy = () => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            borderRadius: '20px'
+            borderRadius: '20px',
+            overflow: 'hidden'
           }}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
               Create A New Order 
             </Typography>
-            {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography> */}
+
+            <div 
+              style={{ 
+                display: 'flex', 
+                gap: '10px'
+              }}> 
+              <Grid item xs={12} xl={4} lg={4} md={6}>
+                <FormControl fullWidth style={{ marginTop: 20 }}>
+                  <InputLabel>Partner</InputLabel>
+                  <Select
+                    id="demo-select-small"
+                    label="Partner"
+                    onChange={(e) => setCreatedOrder((prev: any) => ({...prev, partnerId: e.target.value}))}
+                    value={createdOrder.partnerId}
+                    size="small"
+                  >
+                    {
+                      partners.length > 0 ? partners.map((item: any) => (
+                        <MenuItem value={item.id}>{item.fullName}</MenuItem>
+                      )) : (
+                        <MenuItem value="">
+                          <FormLabel>None</FormLabel>
+                        </MenuItem>
+                      )
+                    }
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} xl={4} lg={4} md={6}>
+                <FormControl fullWidth style={{ marginTop: 20 }}>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    id="demo-select-small"
+                    value={createdOrder.status}
+                    label="Status"
+                    onChange={(e) => {
+                      setCreatedOrder((prev: any) => ({...prev, status: e.target.value}));
+                    }}
+                    size="small"
+                  >
+                    {
+                      statuses.map((item: any) => (
+                        <MenuItem value={item.value}>{item.name}</MenuItem>
+                      ))
+                    }
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} xl={4} lg={4} md={6} 
+                    style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <Button 
+                  size='medium'
+                  variant="contained" 
+                  color="info" 
+                  onClick={() => setCreatedOrder((prev: any) => {
+                      const _orderDetails = [...prev.orderDetails];
+                      _orderDetails.push({
+                        productId: null,
+                        unitPrice: null,
+                        quantity: null
+                      });
+                      return {...prev, orderDetails: _orderDetails}
+                    })
+                  }
+                  style={{ marginTop: 'auto'}}
+                  startIcon={<Plus />}
+                >
+                  Add Product
+                </Button>
+              </Grid>
+            </div>
+            <div 
+              style={{    
+                maxHeight: '300px',
+                overflowY: 'scroll'
+              }}
+            >
+              {
+                  createdOrder.orderDetails.length > 0 && createdOrder.orderDetails.map((item: any, idx: number) => (
+                    <div key={idx} style={{ display: 'flex', gap: '10px' }}>
+                      <Grid item xs={12} xl={4} lg={4} md={6}>
+                        <FormControl fullWidth style={{ marginTop: 20 }}>
+                          <InputLabel>Product</InputLabel>
+                          <Select
+                            id="demo-select-small"
+                            value={createdOrder.orderDetails[idx]?.productId}
+                            label="Product"
+                            onChange={(e) => setCreatedOrder((prev: any) => {
+                              const _orderDetails = [...prev.orderDetails];
+                              _orderDetails[idx].productId = e.target.value;
+                              return {...prev, orderDetails: _orderDetails};
+                            })}
+                            size="small"
+                          >
+                            {
+                              products.length > 0 && products.map((item: any) => (
+                                <MenuItem key={item} value={item.id}>{item.name}</MenuItem>
+                              ))
+                            }
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} xl={4} lg={4} md={6}>
+                        <FormControl fullWidth style={{ marginTop: 20 }}>
+                          <TextField
+                            fullWidth
+                            size='small'
+                            label='Unit'
+                            value={createdOrder.orderDetails[idx].unitPrice}
+                            onChange={(e: any) => {
+                              setCreatedOrder((prev: any) => {
+                                const _orderDetails = [...prev.orderDetails];
+                                _orderDetails[idx].unitPrice = parseInt(e.target.value);
+                                return {...prev, orderDetails: _orderDetails};
+                              })
+                            }}
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid item xs={12} xl={4} lg={4} md={6}>
+                        <FormControl fullWidth style={{ marginTop: 20 }}>
+                          <TextField
+                            fullWidth
+                            size='small'
+                            label='Quantity'
+                            value={createdOrder.orderDetails[idx].quantity}
+                            onChange={(e: any) => {
+                              setCreatedOrder((prev: any) => {
+                                const _orderDetails = [...prev.orderDetails];
+                                _orderDetails[idx].quantity = parseInt(e.target.value);
+                                return {...prev, orderDetails: _orderDetails};
+                              })
+                            }}
+                          />
+                        </FormControl>
+                      </Grid>
+                    </div>
+                  ))
+              }
+            </div>
+            {
+              createdOrder.orderDetails.length > 0 && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginTop: 10
+                }}>
+                  <Button 
+                    size='medium'
+                    variant="contained" 
+                    color="primary" 
+                    onClick={handleSave}
+                    style={{ marginTop: '10px'}}
+                    startIcon={<CheckBold />}
+                  >
+                    Save
+                  </Button>
+                </div>
+              )
+            }
           </Box>
         </Modal>
       </Grid>
+
+      <Button 
+        size='small'
+        variant="contained" 
+        color="info" 
+        onClick={() => {
+          setShowAddOrder(true);
+          if (partners.length > 0) {
+            setCreatedOrder((prev: any) => (
+              {...prev, partnerId: partners[0].id, status: statuses[0].value}
+            ));
+          }
+        }}
+        startIcon={<Plus />}
+        style={{
+          position: 'fixed',
+          bottom: '50px',
+          right: '20px'
+        }}
+      >
+        Add Order
+      </Button>
     </DatePickerWrapper>
   )
 }

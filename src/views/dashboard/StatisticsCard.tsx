@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactElement } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -20,6 +20,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 
 // ** Types
 import { ThemeColor } from 'src/@core/layouts/types'
+import { ServerService } from 'src/@core/services/serverService.service'
 
 interface DataType {
   stats: string
@@ -28,61 +29,112 @@ interface DataType {
   icon: ReactElement
 }
 
+const serverService = new ServerService();
+
 const salesData: DataType[] = [
   {
     stats: '245k',
-    title: 'Revenue',
+    title: 'Sales',
     color: 'primary',
     icon: <TrendingUp sx={{ fontSize: '1.75rem' }} />
   },
   {
     stats: '$88k',
     color: 'info',
-    title: 'Profit',
+    title: 'Cost',
     icon: <CurrencyUsd sx={{ fontSize: '1.75rem' }} />
   },
   {
     stats: '12.5k',
-    title: 'Customers',
+    title: 'Salary',
     color: 'success',
     icon: <AccountOutline sx={{ fontSize: '1.75rem' }} />
-  },
-  {
-    stats: '1.54k',
-    color: 'warning',
-    title: 'Products',
-    icon: <CellphoneLink sx={{ fontSize: '1.75rem' }} />
-  }
- 
+  }, 
 ]
 
-const renderStats = () => {
-  return salesData.map((item: DataType, index: number) => (
-    <Grid item xs={12} sm={3} key={index}>
-      <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar
-          variant='rounded'
-          sx={{
-            mr: 3,
-            width: 44,
-            height: 44,
-            boxShadow: 3,
-            color: 'common.white',
-            backgroundColor: `${item.color}.main`
-          }}
-        >
-          {item.icon}
-        </Avatar>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography variant='caption'>{item.title}</Typography>
-          <Typography variant='h6'>{item.stats}</Typography>
+const renderStats = (report: any) => {
+  return (
+    <React.Fragment>
+      <Grid item xs={12} sm={4}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar
+            variant='rounded'
+            sx={{
+              mr: 3,
+              width: 44,
+              height: 44,
+              boxShadow: 3,
+              color: 'common.white',
+              backgroundColor: `primary.main`
+            }}
+          >
+            <TrendingUp sx={{ fontSize: '1.75rem' }} />
+          </Avatar>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant='caption'>Sales</Typography>
+            <Typography variant='h6'>{report.sale}</Typography>
+          </Box>
         </Box>
-      </Box>
-    </Grid>
-  ))
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar
+            variant='rounded'
+            sx={{
+              mr: 3,
+              width: 44,
+              height: 44,
+              boxShadow: 3,
+              color: 'common.white',
+              backgroundColor: `info.main`
+            }}
+          >
+            <CurrencyUsd sx={{ fontSize: '1.75rem' }} />
+          </Avatar>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant='caption'>Cost</Typography>
+            <Typography variant='h6'>{report.cost}</Typography>
+          </Box>
+        </Box>
+      </Grid>
+      <Grid item xs={12} sm={4}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Avatar
+            variant='rounded'
+            sx={{
+              mr: 3,
+              width: 44,
+              height: 44,
+              boxShadow: 3,
+              color: 'common.white',
+              backgroundColor: `success.main`
+            }}
+          >
+            <AccountOutline sx={{ fontSize: '1.75rem' }} />
+          </Avatar>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography variant='caption'>Salary</Typography>
+            <Typography variant='h6'>{report.salary}</Typography>
+          </Box>
+        </Box>
+      </Grid>
+    </React.Fragment>
+  )
 }
 
 const StatisticsCard = () => {
+  const [report, setReport] = useState(null);
+
+  const getReport = () => {
+    serverService
+      .getReport()
+      .then((res) => setReport(res.data));
+  }
+
+  useEffect(() => {
+    getReport();
+  }, [])
+
   return (
     <Card>
       <CardHeader
@@ -102,9 +154,13 @@ const StatisticsCard = () => {
         }}
       />
       <CardContent sx={{ pt: theme => `${theme.spacing(3)} !important` }}>
-        <Grid container spacing={[5, 0]}>
-          {renderStats()}
-        </Grid>
+        {
+          report && (
+            <Grid container spacing={[5, 0]}>
+              {renderStats(report)}
+            </Grid>
+          )
+        }
       </CardContent>
     </Card>
   )

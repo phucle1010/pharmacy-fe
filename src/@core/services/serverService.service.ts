@@ -52,7 +52,14 @@ export class ServerService {
     }
 
     // BUSINESS PARTNERS
-    public getBusinessPartners(): Promise<any> {
+    public getBusinessPartners(query: any = null): Promise<any> {
+        const queryString = new URLSearchParams(query).toString();
+        if (query) {
+            return axios.get(
+                `${this.BE_URL}/partner?${queryString}`, 
+                { headers: { ...this.HEADERS }}
+            )
+        }
         return axios.get(
             `${this.BE_URL}/partner`, 
             { headers: { ...this.HEADERS }}
@@ -90,6 +97,21 @@ export class ServerService {
         )
     }
 
+    public getProductCategoryList(): Promise<any> {
+        return axios.get(
+            `${this.BE_URL}/category`, 
+            { headers: { ...this.HEADERS }}
+        )
+    }
+
+    public saveProduct(data: any): Promise<any> {
+        return axios.post(
+            `${this.BE_URL}/product`, 
+            data,
+            { headers: { ...this.HEADERS }}
+        )
+    }
+
 
     // ORDER
     public getOrderBuyList(): Promise<any> {
@@ -106,5 +128,20 @@ export class ServerService {
         )
     }
 
+    public importOrderBuy(data: any): Promise<any> {
+        return axios.post(
+            `${this.BE_URL}/order-buy`,
+            data, 
+            { headers: { ...this.HEADERS }}
+        )
+    }
+
+
+    public getReport(): Promise<any> {
+        return axios.get(
+            `${this.BE_URL}/report`,
+            { headers: { ...this.HEADERS }}
+        )
+    }
 
 }
