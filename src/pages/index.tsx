@@ -79,20 +79,11 @@ const Dashboard = () => {
                 trend='negative'
                 trendNumber='-18%'
                 subtitle='Last Week'
-                title='Sales Queries'
+                title='Orders'
                 icon={<HelpCircleOutline />}
               />
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <SalesByCountries />
-        </Grid>
-        <Grid item xs={12} md={12} lg={8}>
-          <DepositWithdraw />
-        </Grid>
-        <Grid item xs={12}>
-          <Table />
         </Grid>
       </Grid>
     </ApexChartWrapper>

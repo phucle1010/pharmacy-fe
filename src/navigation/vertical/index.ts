@@ -9,7 +9,7 @@ import { Account, AccountGroup, FormatListCheckbox, SwapVertical, SwapVerticalCi
 const navigation = (): VerticalNavItemsType => {
   return [
     {
-      title: 'Home',
+      title: 'Statistics',
       icon: HomeOutline,
       path: '/'
     },
