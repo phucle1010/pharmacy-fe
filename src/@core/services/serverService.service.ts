@@ -74,6 +74,14 @@ export class ServerService {
         )
     }
 
+    public postBusinessPartners(data: any): Promise<any> {
+        return axios.post(
+            `${this.BE_URL}/partner`, 
+            data,
+            { headers: { ...this.HEADERS }}
+        )
+    }
+
     // PRODUCT
     public getProductList(): Promise<any> {
         return axios.get(
@@ -97,4 +105,6 @@ export class ServerService {
             { headers: { ...this.HEADERS }}
         )
     }
+
+
 }
