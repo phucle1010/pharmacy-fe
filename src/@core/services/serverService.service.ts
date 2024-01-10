@@ -81,4 +81,20 @@ export class ServerService {
             { headers: { ...this.HEADERS }}
         )
     }
+
+
+    // ORDER
+    public getOrderBuyList(): Promise<any> {
+        return axios.get(
+            `${this.BE_URL}/order-buy`, 
+            { headers: { ...this.HEADERS }}
+        )
+    }
+
+    public getOrderSellList(): Promise<any> {
+        return axios.get(
+            `${this.BE_URL}/order-sell`, 
+            { headers: { ...this.HEADERS }}
+        )
+    }
 }
