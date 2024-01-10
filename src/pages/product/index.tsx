@@ -20,7 +20,6 @@ const Product = () => {
       .getProductList()
       .then((res) => {
         setProducts(res.data);
-        console.log('data: ', res.data);
       })
   }
 
@@ -34,10 +33,10 @@ const Product = () => {
         <Grid item xs={12} md={12}>
           {/* <FormLayoutsBasic /> */}
           <Card style={{ paddingBottom: 20 }}>
-            <CardHeader title='Business Partner' titleTypographyProps={{ variant: 'h6' }} />
+            <CardHeader title='Product' titleTypographyProps={{ variant: 'h6' }} />
             <TextField 
               type='text' 
-              label='Search Partner' 
+              label='Search Product' 
               placeholder='Name' 
               style={{ width: 300, marginLeft: 20, marginRight: 8 }}
             />
