@@ -1,14 +1,12 @@
 'use client'
 
 import axios from "axios";
+import { environment } from 'src/environment/environment'
 
 export class AuthService {
     ACCESS_TOKEN = 'auth_access_token';
-    BE_URL = 'http://localhost:8080';
-    HEADERS = {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-    }
+    BE_URL = environment.host;
+    HEADERS = environment.headers;
 
     constructor() {}
 
@@ -17,7 +15,7 @@ export class AuthService {
     }
 
     public saveToken(token: string) {
-        window.localStorage.setItem(this.ACCESS_TOKEN, token);
+        window.localStorage.setItem(this.ACCESS_TOKEN, JSON.stringify({ access_token: token }));
     }
 
     public removeToken() {
@@ -25,7 +23,10 @@ export class AuthService {
     }
 
     public getToken() {
-        return JSON.parse(window.localStorage.getItem(this.ACCESS_TOKEN) || '{}');
+        if (typeof window !== 'undefined') {
+            return JSON.parse(window.localStorage.getItem(this.ACCESS_TOKEN) || '{}');
+        }
+        return null;
     }
 
     public authenticate(credentials: any) {
