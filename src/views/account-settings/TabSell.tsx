@@ -17,9 +17,10 @@ import InputAdornment from '@mui/material/InputAdornment'
 
 // ** Icons Imports
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import { Card, CardHeader, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { Card, CardHeader, Modal, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { ServerService } from 'src/@core/services/serverService.service'
 import { formattedDate, getOrderStatus } from 'src/@core/helpers'
+import { Plus } from 'mdi-material-ui'
 
 interface State {
   newPassword: string
@@ -35,6 +36,7 @@ const serverService = new ServerService();
 const TabSell = () => {
   // ** States
   const [orders, setOrders] = useState<any>([]);
+  const [showAddOrder, setShowAddOrder] = useState<boolean>(false);
 
   const getOrderSellList = () => {
     serverService
@@ -54,7 +56,16 @@ const TabSell = () => {
         <Grid item xs={12} md={12}>
           {/* <FormLayoutsBasic /> */}
           <Card style={{ paddingBottom: 20 }}>
-            <CardHeader title='Order Buy' titleTypographyProps={{ variant: 'h6' }} />
+            <CardHeader title='Order Sell' titleTypographyProps={{ variant: 'h6' }} />
+
+            <Button 
+              size='small' 
+              variant='contained' 
+              color='info' 
+              startIcon={<Plus/>}
+              style={{ marginLeft: 20, marginBottom: 30 }}
+              onClick={() => setShowAddOrder(true)}
+            >Add new</Button>
 
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 650 }} aria-label='simple table'>
@@ -92,6 +103,31 @@ const TabSell = () => {
           </Card>
         </Grid>
         
+        <Modal
+          open={showAddOrder}
+          onClose={() => setShowAddOrder(false)}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box style={{ 
+            height: '500px',
+            width: '700px',
+            padding: '20px',
+            background: '#fff',
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '20px'
+          }}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Create A New Order 
+            </Typography>
+            {/* <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            </Typography> */}
+          </Box>
+        </Modal>
       </Grid>
     </DatePickerWrapper>
   )
