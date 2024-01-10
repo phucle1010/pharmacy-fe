@@ -51,6 +51,7 @@ const User = () => {
   // ** State
   const [value, setValue] = useState<string>('account');
   const [users, setUsers] = useState([]);
+  const [searchText, setSearchText] = useState('');
 
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue)
@@ -58,13 +59,17 @@ const User = () => {
 
   const getUserList = () => {
     serverService
-      .getUserList()
+      .getUserList({ searchText })
       .then((res) => setUsers(res.data))
   }
 
   useEffect(() => {
     getUserList();
   }, [])
+
+  useEffect(() => {
+    getUserList();
+  }, [searchText])
 
   return (
     <DatePickerWrapper>
@@ -77,6 +82,7 @@ const User = () => {
               type='text' 
               label='Search User' 
               placeholder='Name' 
+              onChange={e => setSearchText(e.target.value)}
               style={{ width: 300, marginLeft: 20, marginRight: 8 }}
             />
 

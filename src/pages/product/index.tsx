@@ -14,10 +14,11 @@ const serverService = new ServerService();
 
 const Product = () => {
   const [products, setProducts] = useState<any>([]);
+  const [searchText, setSearchText] = useState('');
 
   const getProductList = () => {
     serverService
-      .getProductList()
+      .getProductList({ searchText })
       .then((res) => {
         setProducts(res.data);
       })
@@ -26,6 +27,10 @@ const Product = () => {
   useEffect(() => {
     getProductList();
   }, [])
+
+  useEffect(() => {
+    getProductList();
+  }, [searchText])
 
   return (
     <DatePickerWrapper>
@@ -38,6 +43,7 @@ const Product = () => {
               type='text' 
               label='Search Product' 
               placeholder='Name' 
+              onChange={e => setSearchText(e.target.value)}
               style={{ width: 300, marginLeft: 20, marginRight: 8 }}
             />
 
