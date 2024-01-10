@@ -11,82 +11,86 @@ export class ServerService {
     };
 
 
-    constructor() {}
+    constructor() { }
 
     // USERS
     public getProfile(): Promise<any> {
         return axios.get(
-            `${this.BE_URL}/users/profile`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/users/profile`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
-    public getUserList(): Promise<any> {
+    public getUserList(query: any = null): Promise<any> {
+        const queryString = new URLSearchParams(query).toString();
         return axios.get(
-            `${this.BE_URL}/users`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/users?${queryString}`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
     public saveUserData(data: any): Promise<any> {
         return axios.post(
-            `${this.BE_URL}/users`, 
+            `${this.BE_URL}/users`,
             data,
-            { headers: { ...this.HEADERS }}
+            { headers: { ...this.HEADERS } }
         )
     }
 
     public updateUserData(id: number, data: any): Promise<any> {
         return axios.put(
-            `${this.BE_URL}/users/${id}`, 
+            `${this.BE_URL}/users/${id}`,
             data,
-            { headers: { ...this.HEADERS }}
+            { headers: { ...this.HEADERS } }
         )
     }
-   
+
     public deleteUserData(id: number): Promise<any> {
         return axios.delete(
-            `${this.BE_URL}/users/${id}`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/users/${id}`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
     // BUSINESS PARTNERS
-    public getBusinessPartners(): Promise<any> {
+    public getBusinessPartners(query: any = null): Promise<any> {
+        const queryString = new URLSearchParams(query).toString();
+
         return axios.get(
-            `${this.BE_URL}/partner`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/partner?${queryString}`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
     public saveBusinessPartner(data: any): Promise<any> {
         return axios.post(
-            `${this.BE_URL}/partner`, 
+            `${this.BE_URL}/partner`,
             data,
-            { headers: { ...this.HEADERS }}
+            { headers: { ...this.HEADERS } }
         )
     }
 
     public deleteBusinessPartner(id: number): Promise<any> {
         return axios.delete(
-            `${this.BE_URL}/partner/${id}`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/partner/${id}`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
     public postBusinessPartners(data: any): Promise<any> {
         return axios.post(
-            `${this.BE_URL}/partner`, 
+            `${this.BE_URL}/partner`,
             data,
-            { headers: { ...this.HEADERS }}
+            { headers: { ...this.HEADERS } }
         )
     }
 
     // PRODUCT
-    public getProductList(): Promise<any> {
+    public getProductList(query: any = null): Promise<any> {
+        const queryString = new URLSearchParams(query).toString();
         return axios.get(
-            `${this.BE_URL}/product`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/product?${queryString}`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
@@ -94,15 +98,15 @@ export class ServerService {
     // ORDER
     public getOrderBuyList(): Promise<any> {
         return axios.get(
-            `${this.BE_URL}/order-buy`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/order-buy`,
+            { headers: { ...this.HEADERS } }
         )
     }
 
     public getOrderSellList(): Promise<any> {
         return axios.get(
-            `${this.BE_URL}/order-sell`, 
-            { headers: { ...this.HEADERS }}
+            `${this.BE_URL}/order-sell`,
+            { headers: { ...this.HEADERS } }
         )
     }
 

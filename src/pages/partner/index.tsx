@@ -30,10 +30,11 @@ const serverService = new ServerService();
 
 const FormLayouts = () => {
   const [partners, setPartners] = useState<any>([]);
+  const [searchText, setSearchText] = useState('');
 
   const getPartners = () => {
     serverService
-      .getBusinessPartners()
+      .getBusinessPartners({searchText})
       .then((res) => {
         setPartners(res.data);
       })
@@ -42,6 +43,10 @@ const FormLayouts = () => {
   useEffect(() => {
     getPartners();
   }, [])
+
+  useEffect(() => {
+    getPartners();
+  }, [searchText])
 
   const [add, setAdd] = useState(false);
   const [newPartner, setNewPartner] = useState<Partner>({
@@ -56,7 +61,7 @@ const FormLayouts = () => {
     setAdd((prevAdd) => !prevAdd);
   }
 
-  const postPartners = (partnerData) => {
+  const postPartners = (partnerData: any) => {
     serverService
       .postBusinessPartners(partnerData)
       .then((res) => {
@@ -103,7 +108,8 @@ const FormLayouts = () => {
             <TextField 
               type='text' 
               label='Search Partner' 
-              placeholder='Name' 
+              placeholder='Name'
+              onChange={e => setSearchText(e.target.value)} 
               style={{ width: 300, marginLeft: 20, marginRight: 8 }}
             />
 
